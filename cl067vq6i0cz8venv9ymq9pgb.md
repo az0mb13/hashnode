@@ -7,23 +7,23 @@ This is packed with features and one such feature is the "Bulk Markdown Importer
 
 ![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1644732483145/G0KYaMO56.png)
 
-While I was working on migrating my blog from Jekyll to Hashnode, I was searching for an import feature. Fortunately, Hashnode has a Markdown importer that allows importing markdown posts in bulk but that needs to be in a certain format. 
-For some reason, I kept getting errors when importing my posts. I couldn't figure it out because they were no descriptive errors on the UI. Then I looked at the response in my Burp and that's when I noticed the error that led me to write this blog. 
+While I was working on migrating my blog from Jekyll to Hashnode, I was searching for an import feature. Fortunately, Hashnode has a markdown importer that allows importing markdown posts in bulk but that needs to be in a certain specific format. 
+For some reason, I kept getting errors when importing my posts. I couldn't figure it out because there were no descriptive errors on the UI. Then I looked at the response in my Burp and that's when I noticed the error that led me to write this blog. 
 
-This was affected by LFI that allowed us to fetch internal files from the server. It was escalated to an RCE by finding the actual IP of the server behind Cloudflare by my mate [Adhyayan](https://twitter.com/nullvoiddeath). 
+This was affected by a Local File Inclusion vulnerability (LFI) that allowed us to fetch internal files from the server. It was escalated to an RCE by finding the actual IP of the server behind Cloudflare by my mate [Adhyayan](https://twitter.com/nullvoiddeath). 
 
-Here's how we escalated a vulnerable Markdown Parser to Code Execution on the server. 
+Here's how we escalated a bug in the vulnerable markdown parser to get code execution on the server. 
 
 ---
 # The Exploit
 
 ### Finding the LFI
 
-Markdown has its own quirks and features to allow referencing images in the files. To include an image in the blog post, or any MD file, here's the common syntax:
+Markdown has its own quirks and features to allow referencing images in the files. To include an image in the blog post or any MD file, here's the common syntax:
 
 `![image.png](https://image.url/image_file.png)`
 
-The Bulk Importer at Hashnode accepts a ZIP file containing all the Markdown posts to be published. 
+The Bulk Importer at Hashnode accepts a ZIP file containing all the markdown posts to be published. 
 Here's how their sample post format looks:
 
 ```
@@ -42,8 +42,8 @@ Here's how the response looks inside Burp Suite.
 
 ![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1644735982896/4SoCpzKr3.png)
 
-Nothing interesting about it. It's just a normal Markdown parsed post format. 
-This made us wonder about the Markdown quirk that allows a user to insert images by specifying their paths:
+Nothing interesting about it. It's just a normal markdown parsed post format. 
+This made us wonder about the markdown feature that allows a user to insert images by specifying their paths:
 
 `![anotherimage.png](/images/blog.jpg)`
 
@@ -115,7 +115,7 @@ Who would have thought that Markdown parsers can lead to command executions on t
 Even the smallest of low severity issues can be escalated when chained with other vulnerabilities. 
 Here, a simple information disclosure bug in the descriptive stack trace helped us figure out the behavior of the markdown parser which in turn allowed us to fetch internal files from the server. 
 
-It's always a good idea to implement proper error handling in your code and log the descriptive errors in the backend. 
+It's always a good idea to implement proper error handling and input validation in your code and log the descriptive errors in the backend. 
 Hashnode team fixed the vulnerability in the Markdown parser and rotated all their private keys to remediate the bug. 
 
 it's always a bad idea to trust your users' input!
