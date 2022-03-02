@@ -120,9 +120,13 @@ Hashnode team fixed the vulnerability in the Markdown parser and rotated all the
 
 it's always a bad idea to trust your users' input!
 
+**Edit**: According to Hashnode, the SSH was IP whitelisted and unauthorized access would not have been possible. 
+
 > **Links for reference**
 
 > Adhyayan Panwar's Twitter: https://twitter.com/nullvoiddeath
+
+> Rants from the Void: https://rants.fromthevo.id/the-elusive-ssh-hunt-for-the-origin-ip
 
 > Kernel.org Documentation: https://www.kernel.org/doc/Documentation/networking/proc_net_tcp.txt 
 
